@@ -6,18 +6,7 @@ import { JoinTeamModal } from '../components/JoinTeamModal'
 import { useAuth } from '../context/AuthContext'
 import { fetchDashboardTeams, type TeamSummary } from '../lib/teams'
 import { fmtEur } from '../lib/format'
-
-function roleLabel(role: string): string {
-  if (role === 'teamadmin') return 'Ylläpitäjä'
-  if (role === 'approver') return 'Hyväksyjä'
-  return 'Pelaaja'
-}
-
-function roleClass(role: string): string {
-  if (role === 'teamadmin') return 'role-admin'
-  if (role === 'approver') return 'role-approver'
-  return ''
-}
+import { roleClass, roleLabel } from '../lib/team'
 
 export function DashboardPage() {
   const { profile, logout } = useAuth()
