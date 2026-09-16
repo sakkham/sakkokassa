@@ -13,7 +13,7 @@ import { MemberRoleRow } from '../../components/MemberRoleRow'
 type ModalKind = 'addfee' | 'bulkmove' | 'archive' | 'addfeetype' | null
 
 export function TeamAdminPage() {
-  const { team, canManage, refreshTeam } = useTeamContext()
+  const { team, myMember, canManage, refreshTeam } = useTeamContext()
   const [members, setMembers] = useState<TeamMember[] | null>(null)
   const [feeTypes, setFeeTypes] = useState<FeeType[] | null>(null)
   const [modal, setModal] = useState<ModalKind>(null)
@@ -153,6 +153,28 @@ export function TeamAdminPage() {
     }
   }
 
+  async function handleRemoveMember(member: TeamMember) {
+    const question = member.user_id
+      ? `Poistetaanko ${member.username} joukkueesta? Hänen sakkonsa säilyvät joukkueen tiedoissa.`
+      : `Poistetaanko ${member.username} listalta?`
+    if (!confirm(question)) return
+    setMembersError('')
+    setMembersOk('')
+    try {
+      const { data, error } = await supabase.rpc('remove_member', { p_team_id: team.id, p_member_id: member.id })
+      if (error) throw error
+      const result = data as { deleted?: boolean } | null
+      setMembersOk(
+        result?.deleted
+          ? `✅ ${member.username} poistettu.`
+          : `✅ ${member.username} poistettu joukkueesta — sakot säilyvät.`,
+      )
+      load()
+    } catch (err) {
+      setMembersError(rpcErrorMessage(err))
+    }
+  }
+
   async function deleteFeeType(feeType: FeeType) {
     if (!confirm(`Poistetaanko sakkotyyppi "${feeType.reason}"?`)) return
     try {
@@ -213,7 +235,9 @@ export function TeamAdminPage() {
                 member={m}
                 role={roleEdits[m.id] ?? m.role}
                 disabled={savingRoles}
+                isSelf={myMember?.id === m.id}
                 onChange={(memberId, role) => setRoleEdits((prev) => ({ ...prev, [memberId]: role }))}
+                onRemove={handleRemoveMember}
               />
             ))}
             <button className="btn btn-primary" style={{ marginTop: 12 }} onClick={saveAllRoles} disabled={savingRoles}>

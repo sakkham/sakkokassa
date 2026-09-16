@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTeamContext } from '../TeamLayout'
 import { supabase } from '../../lib/supabaseClient'
 import { rpcErrorMessage } from '../../lib/rpcErrors'
@@ -14,6 +15,7 @@ function statusLabel(f: Fee): string | null {
 
 export function MyFeesPage() {
   const { team, myMember } = useTeamContext()
+  const navigate = useNavigate()
   const [fees, setFees] = useState<Fee[] | null>(null)
   const [error, setError] = useState('')
   const [seasonFilter, setSeasonFilter] = useState('')
@@ -75,6 +77,21 @@ export function MyFeesPage() {
       })
       if (err) throw err
       alert('✅ Ehdotus kaikkien sakkojen merkitsemisestä maksetuksi lähetetty!')
+    } catch (err) {
+      alert(rpcErrorMessage(err))
+    }
+  }
+
+  async function handleLeaveTeam() {
+    const ok = confirm(
+      'Haluatko varmasti poistua joukkueesta?\n\nMahdolliset maksamattomat sakkosi jäävät joukkueen tietoihin ' +
+        'odottamaan maksua — et voi poistua niiden kiertämiseksi. Voit liittyä myöhemmin uudelleen samalla kutsukoodilla.',
+    )
+    if (!ok) return
+    try {
+      const { error: err } = await supabase.rpc('leave_team', { p_team_id: team.id })
+      if (err) throw err
+      navigate('/dashboard')
     } catch (err) {
       alert(rpcErrorMessage(err))
     }
@@ -179,6 +196,10 @@ export function MyFeesPage() {
           )}
         </div>
       )}
+
+      <div className="card">
+        <button className="btn btn-outline-danger" onClick={handleLeaveTeam}>🚪 Poistu joukkueesta</button>
+      </div>
     </div>
   )
 }

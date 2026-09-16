@@ -26,6 +26,9 @@ const MESSAGES: Record<string, string> = {
   invalid_invite_code: 'Virheellinen kutsukoodi.',
   reject_reason_required: 'Itseesi kohdistuvan ehdotuksen hylkäys vaatii perustelun.',
   season_label_required: 'Kauden nimi vaaditaan arkistoinnille.',
+  last_admin: 'Joukkueeseen täytyy jäädä vähintään yksi ylläpitäjä.',
+  use_leave_instead: 'Käytä "Poistu joukkueesta" -toimintoa poistuaksesi itse.',
+  member_has_history: 'Jäsentä ei voi poistaa, koska hänellä on sakko- tai ehdotushistoriaa.',
 }
 
 export function rpcErrorMessage(error: unknown): string {

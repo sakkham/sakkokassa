@@ -499,6 +499,10 @@ export type Database = {
       }
       parse_fee_date: { Args: { p_date: string }; Returns: string }
       regenerate_invite_code: { Args: { p_team_id: string }; Returns: string }
+      remove_member: {
+        Args: { p_member_id: string; p_team_id: string }
+        Returns: Json
+      }
       save_team_settings: {
         Args: {
           p_allow_player_suggest?: boolean
