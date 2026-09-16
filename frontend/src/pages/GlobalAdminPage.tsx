@@ -4,7 +4,7 @@ import { AppHeader } from '../components/AppHeader'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
 import { rpcErrorMessage } from '../lib/rpcErrors'
-import type { Team } from '../lib/team'
+import { TEAM_SAFE_COLUMNS, type Team } from '../lib/team'
 import type { Database } from '../lib/database.types'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -19,7 +19,7 @@ export function GlobalAdminPage() {
   const load = useCallback(async () => {
     setError('')
     const [{ data: teamRows, error: teamErr }, { data: userRows, error: userErr }] = await Promise.all([
-      supabase.from('teams').select('*').order('name'),
+      supabase.from('teams').select(TEAM_SAFE_COLUMNS).order('name'),
       supabase.from('profiles').select('*').order('username'),
     ])
     if (teamErr || userErr) { setError('Latausvirhe.'); return }

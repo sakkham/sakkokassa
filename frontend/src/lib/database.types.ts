@@ -376,6 +376,7 @@ export type Database = {
           created_at: string
           currency_symbol: string
           id: string
+          invite_code: string
           is_active: boolean
           max_fee_amount: number
           name: string
@@ -387,6 +388,7 @@ export type Database = {
           created_at?: string
           currency_symbol?: string
           id?: string
+          invite_code?: string
           is_active?: boolean
           max_fee_amount?: number
           name: string
@@ -398,6 +400,7 @@ export type Database = {
           created_at?: string
           currency_symbol?: string
           id?: string
+          invite_code?: string
           is_active?: boolean
           max_fee_amount?: number
           name?: string
@@ -454,7 +457,7 @@ export type Database = {
       }
       create_team: {
         Args: { p_creator_username: string; p_name: string }
-        Returns: string
+        Returns: Json
       }
       delete_fee: {
         Args: { p_fee_id: string; p_team_id: string }
@@ -465,6 +468,8 @@ export type Database = {
         Args: { p_team_id: string; p_user_id: string }
         Returns: string
       }
+      generate_invite_code: { Args: never; Returns: string }
+      get_invite_code: { Args: { p_team_id: string }; Returns: string }
       has_team_role: {
         Args: { p_roles: string[]; p_team: string; p_user: string }
         Returns: boolean
@@ -475,7 +480,7 @@ export type Database = {
         Returns: boolean
       }
       join_team: {
-        Args: { p_team_id: string; p_username: string }
+        Args: { p_invite_code: string; p_username: string }
         Returns: Json
       }
       leave_team: { Args: { p_team_id: string }; Returns: undefined }
@@ -484,6 +489,7 @@ export type Database = {
         Returns: undefined
       }
       parse_fee_date: { Args: { p_date: string }; Returns: string }
+      regenerate_invite_code: { Args: { p_team_id: string }; Returns: string }
       save_team_settings: {
         Args: {
           p_allow_player_suggest?: boolean

@@ -16,7 +16,11 @@ export interface ActiveTeam {
   name: string
 }
 
-/** Kaikki aktiiviset joukkueet (join-modaalia ja globaalia adminia varten). */
+/** Kaikki aktiiviset joukkueet. Käytännössä vain GlobalAdmin saa tästä
+ * mitään — RLS (is_team_member) suodattaa muilta pois kaikki joukkueet
+ * joiden jäseniä he eivät ole. Liittyminen ei enää käytä tätä (ks.
+ * JoinTeamModal) — kutsukoodijärjestelmän jälkeen ei ole tarkoituskaan
+ * näyttää joukkueiden nimiä kenellekään ennen liittymistä. */
 export async function fetchActiveTeams(): Promise<ActiveTeam[]> {
   const { data, error } = await supabase.from('teams').select('id, name').eq('is_active', true)
   if (error) throw error

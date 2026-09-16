@@ -18,6 +18,11 @@ export function TeamAdminPage() {
   const [feeTypes, setFeeTypes] = useState<FeeType[] | null>(null)
   const [modal, setModal] = useState<ModalKind>(null)
 
+  const [inviteCode, setInviteCode] = useState<string | null>(null)
+  const [codeCopied, setCodeCopied] = useState(false)
+  const [codeError, setCodeError] = useState('')
+  const [regenerating, setRegenerating] = useState(false)
+
   const [roleEdits, setRoleEdits] = useState<Record<string, string>>({})
   const [membersError, setMembersError] = useState('')
   const [membersOk, setMembersOk] = useState('')
@@ -33,13 +38,15 @@ export function TeamAdminPage() {
   const [savingSettings, setSavingSettings] = useState(false)
 
   const load = useCallback(async () => {
-    const [{ data: memberRows }, { data: feeTypeRows }] = await Promise.all([
+    const [{ data: memberRows }, { data: feeTypeRows }, { data: codeData, error: codeErr }] = await Promise.all([
       supabase.from('team_members').select('*').eq('team_id', team.id).eq('status', 'active'),
       supabase.from('fee_types').select('*').eq('team_id', team.id),
+      supabase.rpc('get_invite_code', { p_team_id: team.id }),
     ])
     setMembers(memberRows ?? [])
     setRoleEdits(Object.fromEntries((memberRows ?? []).map((m) => [m.id, m.role])))
     setFeeTypes(feeTypeRows ?? [])
+    if (!codeErr) setInviteCode(codeData ?? null)
   }, [team.id])
 
   useEffect(() => { load() }, [load])
@@ -110,6 +117,32 @@ export function TeamAdminPage() {
     }
   }
 
+  async function handleCopyCode() {
+    if (!inviteCode) return
+    try {
+      await navigator.clipboard.writeText(inviteCode)
+      setCodeCopied(true)
+      setTimeout(() => setCodeCopied(false), 2000)
+    } catch {
+      // Leikepöytä ei aina saatavilla — koodi on joka tapauksessa näkyvissä.
+    }
+  }
+
+  async function handleRegenerateCode() {
+    if (!confirm('Luodaanko uusi kutsukoodi? Vanha koodi lakkaa toimimasta välittömästi.')) return
+    setCodeError('')
+    setRegenerating(true)
+    try {
+      const { data, error } = await supabase.rpc('regenerate_invite_code', { p_team_id: team.id })
+      if (error) throw error
+      setInviteCode(data)
+    } catch (err) {
+      setCodeError(rpcErrorMessage(err))
+    } finally {
+      setRegenerating(false)
+    }
+  }
+
   async function deleteFeeType(feeType: FeeType) {
     if (!confirm(`Poistetaanko sakkotyyppi "${feeType.reason}"?`)) return
     try {
@@ -123,6 +156,30 @@ export function TeamAdminPage() {
 
   return (
     <div className="page">
+      <div className="card">
+        <h2>🔑 Kutsukoodi</h2>
+        {codeError && <div className="msg msg-err" style={{ display: 'block' }}>{codeError}</div>}
+        <div style={{ fontSize: 12, color: '#888', marginBottom: 12 }}>
+          Jaa tämä koodi joukkueen ulkopuolella (esim. WhatsApp/Discord) — sillä pelaajat pääsevät liittymään.
+        </div>
+        <div
+          style={{
+            fontSize: 26, fontWeight: 800, letterSpacing: 3, textAlign: 'center',
+            background: '#f0f2f5', borderRadius: 12, padding: '14px 12px', marginBottom: 12,
+          }}
+        >
+          {inviteCode ?? '········'}
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-outline" style={{ flex: 1 }} onClick={handleCopyCode} disabled={!inviteCode}>
+            {codeCopied ? '✅ Kopioitu!' : '📋 Kopioi'}
+          </button>
+          <button className="btn btn-outline-danger" style={{ flex: 1 }} onClick={handleRegenerateCode} disabled={regenerating}>
+            🔄 Luo uusi koodi
+          </button>
+        </div>
+      </div>
+
       <div className="card">
         <h2>⚡ Toiminnot</h2>
         <button className="btn btn-danger" onClick={() => setModal('addfee')}>💸 Lisää sakko suoraan</button>

@@ -23,6 +23,7 @@ const MESSAGES: Record<string, string> = {
   player_suggest_disabled: 'Pelaajien sakkoehdotukset on poistettu käytöstä tässä joukkueessa.',
   exceeds_max_fee: 'Sakko ylittää suurimman sallitun summan.',
   no_active_fees: 'Ei aktiivisia sakkoja merkittäväksi maksetuksi.',
+  invalid_invite_code: 'Virheellinen kutsukoodi.',
 }
 
 export function rpcErrorMessage(error: unknown): string {

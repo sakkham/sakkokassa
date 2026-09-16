@@ -4,7 +4,7 @@ import { AppHeader } from '../components/AppHeader'
 import { TeamTabs } from '../components/TeamTabs'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import type { Team, TeamMember } from '../lib/team'
+import { TEAM_SAFE_COLUMNS, type Team, type TeamMember } from '../lib/team'
 
 export interface TeamOutletContext {
   team: Team
@@ -34,7 +34,7 @@ export function TeamLayout() {
     setError('')
     try {
       const [{ data: teamRow, error: teamErr }, { data: memberRow, error: memberErr }] = await Promise.all([
-        supabase.from('teams').select('*').eq('id', teamId).maybeSingle(),
+        supabase.from('teams').select(TEAM_SAFE_COLUMNS).eq('id', teamId).maybeSingle(),
         supabase
           .from('team_members')
           .select('*')

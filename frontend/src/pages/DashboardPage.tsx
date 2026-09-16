@@ -99,7 +99,6 @@ export function DashboardPage() {
       {modal === 'join' && profile && (
         <JoinTeamModal
           defaultUsername={profile.username}
-          excludeTeamIds={new Set((teams ?? []).filter((t) => !t.isVirtualAdmin).map((t) => t.teamId))}
           onClose={() => setModal(null)}
           onJoined={handleModalSuccess}
         />
