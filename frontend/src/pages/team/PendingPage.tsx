@@ -62,10 +62,18 @@ export function PendingPage() {
 
   useEffect(() => { load() }, [load])
 
-  async function handleVote(suggestion: Suggestion, approve: boolean) {
+  async function handleVote(suggestion: Suggestion, approve: boolean, requireComment: boolean) {
     let comment = ''
     if (!approve) {
-      comment = prompt('Hylkäysperustelu (valinnainen):') ?? ''
+      comment = prompt(
+        requireComment
+          ? 'Perustele, miksi hylkäät itseesi kohdistuvan ehdotuksen (esim. "duplikaatti"):'
+          : 'Hylkäysperustelu (valinnainen):',
+      ) ?? ''
+      if (requireComment && !comment.trim()) {
+        alert('Itseesi kohdistuvan ehdotuksen hylkäys vaatii perustelun.')
+        return
+      }
     }
     try {
       const { data, error: err } = await supabase.rpc('vote_on_suggestion', {
@@ -125,12 +133,17 @@ export function PendingPage() {
                 <div className="suggestion-actions">
                   {canVote ? (
                     isTarget ? (
-                      <button className="btn-sm btn-sm-approve" onClick={() => handleVote(s, true)}>✓ Kuittaa sakko</button>
+                      <>
+                        <button className="btn-sm btn-sm-approve" onClick={() => handleVote(s, true, false)}>✓ Kuittaa sakko</button>
+                        {canManage && (
+                          <button className="btn-sm btn-sm-reject" onClick={() => handleVote(s, false, true)}>✗ Hylkää</button>
+                        )}
+                      </>
                     ) : (
                       <>
-                        <button className="btn-sm btn-sm-approve" onClick={() => handleVote(s, true)}>✓ Hyväksy</button>
+                        <button className="btn-sm btn-sm-approve" onClick={() => handleVote(s, true, false)}>✓ Hyväksy</button>
                         {canManage && (
-                          <button className="btn-sm btn-sm-reject" onClick={() => handleVote(s, false)}>✗ Hylkää</button>
+                          <button className="btn-sm btn-sm-reject" onClick={() => handleVote(s, false, false)}>✗ Hylkää</button>
                         )}
                       </>
                     )

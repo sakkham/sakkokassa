@@ -24,6 +24,7 @@ const MESSAGES: Record<string, string> = {
   exceeds_max_fee: 'Sakko ylittää suurimman sallitun summan.',
   no_active_fees: 'Ei aktiivisia sakkoja merkittäväksi maksetuksi.',
   invalid_invite_code: 'Virheellinen kutsukoodi.',
+  reject_reason_required: 'Itseesi kohdistuvan ehdotuksen hylkäys vaatii perustelun.',
 }
 
 export function rpcErrorMessage(error: unknown): string {
