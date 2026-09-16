@@ -77,8 +77,7 @@ export function LoginPage() {
 
   return (
     <div className="login-wrap">
-      <div className="login-logo">⚽</div>
-      <div className="login-title">Joukkueen sakot</div>
+      <div className="login-title">Sakkokassa</div>
       <div className="login-sub">Kirjaudu sisään tai rekisteröidy</div>
       <div className="login-card">
         <h2>{step === 'username' ? 'Kirjautuminen' : isNewUser ? 'Luo uusi tili' : 'Kirjautuminen'}</h2>

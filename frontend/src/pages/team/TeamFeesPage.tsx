@@ -116,7 +116,7 @@ export function TeamFeesPage() {
       {error && <div className="msg msg-err" style={{ display: 'block' }}>{error}</div>}
 
       <div className="card">
-        <h2>Joukkueen sakot</h2>
+        <h2>Sakkokassa</h2>
         <div className="view-toggle">
           <button
             className={`view-toggle-btn ${view === 'players' ? 'active' : ''}`}

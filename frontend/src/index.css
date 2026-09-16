@@ -1,5 +1,5 @@
 /* ============================================================
-   Joukkueen sakot — globaali tyylitiedosto
+   Sakkokassa — globaali tyylitiedosto
    Portattu vanhan Reference/Index.html:n <style>-lohkosta samaan
    visuaaliseen ilmeeseen. Sivujen näyttö/piilotus hoituu nyt
    React Routerilla, joten vanha .page/.page.active-mekaniikka on
@@ -346,8 +346,7 @@ textarea { resize: vertical; min-height: 80px; font-size: 16px; }
   padding-bottom: max(24px, env(safe-area-inset-bottom));
   background: linear-gradient(160deg, var(--color-ink) 0%, var(--color-ink-soft) 60%, #0f3460 100%);
 }
-.login-logo { font-size: 52px; margin-bottom: 10px; }
-.login-title { color: white; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.login-title { color: white; font-size: 24px; font-weight: 800; margin-top: 62px; margin-bottom: 4px; }
 .login-sub { color: rgba(255, 255, 255, 0.5); font-size: 13px; margin-bottom: 32px; }
 .login-card {
   background: white;

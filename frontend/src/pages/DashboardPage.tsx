@@ -36,7 +36,7 @@ export function DashboardPage() {
   return (
     <>
       <AppHeader
-        title="⚽ Joukkueen sakot"
+        title="Sakkokassa"
         subtitle={profile?.username ?? 'Ladataan...'}
         actions={
           <>

@@ -64,7 +64,7 @@ export function TeamLayout() {
   if (team === null) {
     return (
       <>
-        <AppHeader title="Joukkueen sakot" backTo="/dashboard" />
+        <AppHeader title="Sakkokassa" backTo="/dashboard" />
         <div className="page">
           <div className="card"><div className="empty">{error || 'Joukkuetta ei löydy.'}</div></div>
         </div>
