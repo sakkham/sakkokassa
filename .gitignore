@@ -1,3 +1,7 @@
 Reference/Index.html
 Reference/Koodi.gs
 Reference/Nimetön laskentataulukko.xlsx
+
+# Supabase CLI:n paikallinen välimuisti (regeneroituu automaattisesti
+# supabase link / db push -komennoilla) — ei kuulu versionhallintaan.
+supabase/.temp/
