@@ -8,6 +8,7 @@ import type { Fee } from '../../lib/team'
 function statusLabel(status: string): string | null {
   if (status === 'paid') return 'Maksettu'
   if (status === 'archived') return 'Arkistoitu'
+  if (status === 'deleted') return 'Poistettu'
   return null
 }
 
