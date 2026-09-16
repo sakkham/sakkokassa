@@ -27,6 +27,12 @@ const MESSAGES: Record<string, string> = {
 }
 
 export function rpcErrorMessage(error: unknown): string {
-  const code = error instanceof Error ? error.message : String(error)
+  // Supabase-js:n .rpc()-kutsujen virheet (PostgrestError) ovat tavallisia
+  // olioita, eivät Error-instansseja — pelkkä `instanceof Error` -tarkistus
+  // ohittaa ne aina ja pudottaa jokaisen virheen yleisviestiin.
+  const code =
+    error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string'
+      ? (error as { message: string }).message
+      : String(error)
   return MESSAGES[code] ?? 'Yhteysvirhe. Yritä uudelleen.'
 }
