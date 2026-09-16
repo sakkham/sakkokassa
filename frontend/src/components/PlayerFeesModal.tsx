@@ -12,11 +12,11 @@ interface PlayerFeesModalProps {
   onDeleteFee: (fee: Fee) => void
 }
 
-function statusLabel(status: string): string {
-  if (status === 'paid') return 'Maksettu'
-  if (status === 'archived') return 'Arkist.'
-  if (status === 'deleted') return 'Poistettu'
-  return status
+function statusLabel(f: Fee): string {
+  if (f.status === 'paid') return 'Maksettu'
+  if (f.status === 'archived') return f.season_label ? `Arkist. · ${f.season_label}` : 'Arkist.'
+  if (f.status === 'deleted') return 'Poistettu'
+  return f.status
 }
 
 export function PlayerFeesModal({ member, active, other, activeTotal, canManage, onClose, onDeleteFee }: PlayerFeesModalProps) {
@@ -65,7 +65,7 @@ export function PlayerFeesModal({ member, active, other, activeTotal, canManage,
               </div>
               <div className="fee-right">
                 <div className="fee-amount" style={{ color: '#aaa' }}>{fmtEur(f.amount)}</div>
-                <div className={`fee-status ${f.status}`}>{statusLabel(f.status)}</div>
+                <div className={`fee-status ${f.status}`}>{statusLabel(f)}</div>
               </div>
             </div>
           ))}

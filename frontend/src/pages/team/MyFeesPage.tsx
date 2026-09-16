@@ -5,10 +5,10 @@ import { rpcErrorMessage } from '../../lib/rpcErrors'
 import { fmtEur, fmtDate } from '../../lib/format'
 import type { Fee } from '../../lib/team'
 
-function statusLabel(status: string): string | null {
-  if (status === 'paid') return 'Maksettu'
-  if (status === 'archived') return 'Arkistoitu'
-  if (status === 'deleted') return 'Poistettu'
+function statusLabel(f: Fee): string | null {
+  if (f.status === 'paid') return 'Maksettu'
+  if (f.status === 'archived') return f.season_label ? `Arkistoitu · ${f.season_label}` : 'Arkistoitu'
+  if (f.status === 'deleted') return 'Poistettu'
   return null
 }
 
@@ -141,7 +141,7 @@ export function MyFeesPage() {
         <div className="card">
           <h2>Historia</h2>
           {other.map((f) => {
-            const label = statusLabel(f.status)
+            const label = statusLabel(f)
             return (
               <div className="fee-item" key={f.id}>
                 <div>

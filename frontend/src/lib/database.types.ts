@@ -117,33 +117,39 @@ export type Database = {
         Row: {
           added_by: string
           amount: number
+          archived_at: string | null
           created_at: string
           id: string
           member_id: string
           occurred_at: string
           reason: string
+          season_label: string | null
           status: string
           team_id: string
         }
         Insert: {
           added_by: string
           amount: number
+          archived_at?: string | null
           created_at?: string
           id?: string
           member_id: string
           occurred_at?: string
           reason: string
+          season_label?: string | null
           status?: string
           team_id: string
         }
         Update: {
           added_by?: string
           amount?: number
+          archived_at?: string | null
           created_at?: string
           id?: string
           member_id?: string
           occurred_at?: string
           reason?: string
+          season_label?: string | null
           status?: string
           team_id?: string
         }
@@ -446,7 +452,10 @@ export type Database = {
         }
         Returns: undefined
       }
-      archive_season: { Args: { p_team_id: string }; Returns: number }
+      archive_season: {
+        Args: { p_season_label: string; p_team_id: string }
+        Returns: number
+      }
       bulk_move_fees: {
         Args: {
           p_from_member_id: string

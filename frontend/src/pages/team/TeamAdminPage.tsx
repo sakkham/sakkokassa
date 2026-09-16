@@ -33,6 +33,10 @@ export function TeamAdminPage() {
   const [maxFee, setMaxFee] = useState(String(team.max_fee_amount))
   const [currency, setCurrency] = useState(team.currency_symbol)
   const [seasonName, setSeasonName] = useState(team.season_name)
+  // Arkistointi nollaa season_namen palvelimella (uusi, nimeämätön kausi
+  // alkaa) — pidä lomakkeen kenttä synkassa sen sijaan että se jäisi
+  // näyttämään juuri arkistoitua, jo vanhentunutta nimeä.
+  useEffect(() => { setSeasonName(team.season_name) }, [team.season_name])
   const [settingsError, setSettingsError] = useState('')
   const [settingsOk, setSettingsOk] = useState('')
   const [savingSettings, setSavingSettings] = useState(false)
@@ -62,6 +66,12 @@ export function TeamAdminPage() {
   function closeModalAndReload() {
     setModal(null)
     load()
+  }
+
+  function closeArchiveModalAndReload() {
+    setModal(null)
+    load()
+    refreshTeam()
   }
 
   async function saveSettings() {
@@ -298,7 +308,12 @@ export function TeamAdminPage() {
         <BulkMoveFeesModal teamId={team.id} members={members} onClose={() => setModal(null)} onMoved={closeModalAndReload} />
       )}
       {modal === 'archive' && (
-        <ArchiveSeasonModal teamId={team.id} onClose={() => setModal(null)} onArchived={closeModalAndReload} />
+        <ArchiveSeasonModal
+          teamId={team.id}
+          defaultSeasonName={team.season_name}
+          onClose={() => setModal(null)}
+          onArchived={closeArchiveModalAndReload}
+        />
       )}
       {modal === 'addfeetype' && (
         <AddFeeTypeModal teamId={team.id} onClose={() => setModal(null)} onAdded={closeModalAndReload} />

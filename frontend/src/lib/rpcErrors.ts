@@ -25,6 +25,7 @@ const MESSAGES: Record<string, string> = {
   no_active_fees: 'Ei aktiivisia sakkoja merkittäväksi maksetuksi.',
   invalid_invite_code: 'Virheellinen kutsukoodi.',
   reject_reason_required: 'Itseesi kohdistuvan ehdotuksen hylkäys vaatii perustelun.',
+  season_label_required: 'Kauden nimi vaaditaan arkistoinnille.',
 }
 
 export function rpcErrorMessage(error: unknown): string {
