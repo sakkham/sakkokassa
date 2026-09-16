@@ -63,9 +63,12 @@ export function TeamLayout() {
 
   if (team === null) {
     return (
-      <div className="page">
-        <div className="card"><div className="empty">{error || 'Joukkuetta ei löydy.'}</div></div>
-      </div>
+      <>
+        <AppHeader title="Joukkueen sakot" backTo="/dashboard" />
+        <div className="page">
+          <div className="card"><div className="empty">{error || 'Joukkuetta ei löydy.'}</div></div>
+        </div>
+      </>
     )
   }
 
@@ -74,7 +77,7 @@ export function TeamLayout() {
   if (!myMember && !isGlobalAdmin) {
     return (
       <>
-        <AppHeader title={team.name} />
+        <AppHeader title={team.name} backTo="/dashboard" />
         <div className="page">
           <div className="card"><div className="empty">Et ole tämän joukkueen jäsen.</div></div>
         </div>
@@ -87,7 +90,7 @@ export function TeamLayout() {
 
   return (
     <>
-      <AppHeader title={team.name} />
+      <AppHeader title={team.name} backTo="/dashboard" />
       <TeamTabs teamId={teamId} canApprove={canApprove} canManage={canManage} />
       <Outlet context={{ team, myMember, isGlobalAdmin, canManage, canApprove, refreshTeam: load } satisfies TeamOutletContext} />
     </>

@@ -75,7 +75,7 @@ export function GlobalAdminPage() {
 
   return (
     <>
-      <AppHeader title="🌐 Globaali ylläpito" />
+      <AppHeader title="🌐 Globaali ylläpito" backTo="/dashboard" />
       <div className="page">
         {error && <div className="msg msg-err" style={{ display: 'block' }}>{error}</div>}
         {ok && <div className="msg msg-ok" style={{ display: 'block' }}>{ok}</div>}
