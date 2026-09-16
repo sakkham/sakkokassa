@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { AppHeader } from '../components/AppHeader'
 import { CreateTeamModal } from '../components/CreateTeamModal'
 import { JoinTeamModal } from '../components/JoinTeamModal'
+import { SettingsModal } from '../components/SettingsModal'
 import { useAuth } from '../context/AuthContext'
 import { fetchDashboardTeams, type TeamSummary } from '../lib/teams'
 import { fmtEur } from '../lib/format'
@@ -12,7 +13,7 @@ export function DashboardPage() {
   const { profile, logout } = useAuth()
   const [teams, setTeams] = useState<TeamSummary[] | null>(null)
   const [loadError, setLoadError] = useState('')
-  const [modal, setModal] = useState<'join' | 'create' | null>(null)
+  const [modal, setModal] = useState<'join' | 'create' | 'settings' | null>(null)
 
   const load = useCallback(async () => {
     if (!profile) return
@@ -39,7 +40,7 @@ export function DashboardPage() {
         subtitle={profile?.username ?? 'Ladataan...'}
         actions={
           <>
-            <button className="header-icon-btn" title="Asetukset" disabled>⚙️</button>
+            <button className="header-icon-btn" title="Asetukset" onClick={() => setModal('settings')}>⚙️</button>
             <button className="header-icon-btn" title="Kirjaudu ulos" onClick={logout}>🚪</button>
           </>
         }
@@ -109,6 +110,9 @@ export function DashboardPage() {
           onClose={() => setModal(null)}
           onCreated={handleModalSuccess}
         />
+      )}
+      {modal === 'settings' && profile && (
+        <SettingsModal username={profile.username} onClose={() => setModal(null)} />
       )}
     </>
   )

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { authErrorMessage } from '../lib/authErrors'
 import { MIN_PASSWORD_LENGTH } from '../lib/auth'
+import { Modal } from '../components/Modal'
 
 type Step = 'username' | 'password'
 
@@ -18,6 +19,7 @@ export function LoginPage() {
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [busy, setBusy] = useState(false)
+  const [showForgotHelp, setShowForgotHelp] = useState(false)
 
   async function handleUsernameSubmit(e: FormEvent) {
     e.preventDefault()
@@ -142,9 +144,41 @@ export function LoginPage() {
             >
               ← Vaihda tunnus
             </button>
+            {!isNewUser && (
+              <button
+                type="button"
+                onClick={() => setShowForgotHelp(true)}
+                style={{
+                  display: 'block', width: '100%', marginTop: 14, background: 'none', border: 'none',
+                  color: '#888', fontSize: 13, textDecoration: 'underline', cursor: 'pointer',
+                }}
+              >
+                Unohtuiko salasana?
+              </button>
+            )}
           </form>
         )}
       </div>
+
+      {showForgotHelp && (
+        <Modal title="🔑 Unohtuiko salasana?" onClose={() => setShowForgotHelp(false)}>
+          <p style={{ fontSize: 14, color: '#444', lineHeight: 1.7, marginBottom: 12 }}>
+            Tällä sovelluksella ei ole (vielä) automaattista salasanan palautusta. Näin pääset takaisin joukkueesi käyttäjäksi:
+          </p>
+          <ol style={{ fontSize: 14, color: '#444', lineHeight: 1.8, paddingLeft: 20, marginBottom: 12 }}>
+            <li>Palaa takaisin ja <strong>luo uusi tili</strong> eri käyttäjätunnuksella.</li>
+            <li>Liity samaan joukkueeseen uudella tunnuksella.</li>
+            <li>
+              Pyydä joukkueesi ylläpitäjää siirtämään vanhat sakkosi uudelle tilillesi Hallinta-sivun
+              <strong> "🔀 Siirrä sakot"</strong> -toiminnolla — koko sakkohistoriasi siirtyy mukana.
+            </li>
+          </ol>
+          <p style={{ fontSize: 12, color: '#aaa', lineHeight: 1.6 }}>
+            Vanha tunnuksesi jää joukkueen jäsenlistalle näkyviin ilman sakkoja (0,00 €) — sillä ei ole
+            muuta haittaa kuin ylimääräinen rivi listassa.
+          </p>
+        </Modal>
+      )}
     </div>
   )
 }
