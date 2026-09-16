@@ -87,11 +87,12 @@ export function TeamLayout() {
 
   const canManage = isGlobalAdmin || myMember?.role === 'teamadmin'
   const canApprove = canManage || myMember?.role === 'approver'
+  const canSuggest = team.allow_player_suggest || canApprove
 
   return (
     <>
       <AppHeader title={team.name} backTo="/dashboard" />
-      <TeamTabs teamId={teamId} canApprove={canApprove} canManage={canManage} />
+      <TeamTabs teamId={teamId} canSuggest={canSuggest} canApprove={canApprove} canManage={canManage} />
       <Outlet context={{ team, myMember, isGlobalAdmin, canManage, canApprove, refreshTeam: load } satisfies TeamOutletContext} />
     </>
   )
