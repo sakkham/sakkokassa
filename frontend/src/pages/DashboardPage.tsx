@@ -85,6 +85,14 @@ export function DashboardPage() {
             🏆 Luo joukkue
           </button>
         </div>
+
+        {profile?.globalRole === 'admin' && (
+          <div style={{ textAlign: 'center', marginTop: 4 }}>
+            <Link to="/admin" className="btn btn-outline-danger" style={{ display: 'inline-block', width: 'auto', padding: '10px 20px', fontSize: 13 }}>
+              🌐 Globaali ylläpito
+            </Link>
+          </div>
+        )}
       </div>
 
       {modal === 'join' && profile && (

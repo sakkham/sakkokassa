@@ -499,6 +499,10 @@ export type Database = {
         Args: { p_make_admin: boolean; p_target_user_id: string }
         Returns: undefined
       }
+      set_team_active: {
+        Args: { p_is_active: boolean; p_team_id: string }
+        Returns: undefined
+      }
       set_team_role: {
         Args: { p_member_id: string; p_new_role: string; p_team_id: string }
         Returns: undefined

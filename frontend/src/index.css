@@ -322,6 +322,8 @@ textarea { resize: vertical; min-height: 80px; font-size: 16px; }
   white-space: nowrap;
 }
 .btn-sm:active { opacity: 0.8; }
+.btn-sm:disabled, .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:active, .btn-sm:disabled:active { transform: none; }
 .btn-sm-approve { background: var(--color-success); color: white; }
 .btn-sm-reject { background: var(--color-accent); color: white; }
 .btn-sm-ghost { background: var(--color-bg); color: #555; }
