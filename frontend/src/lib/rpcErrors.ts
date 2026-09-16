@@ -22,6 +22,7 @@ const MESSAGES: Record<string, string> = {
   invalid_max_fee: 'Maksimisumman täytyy olla vähintään 1.',
   player_suggest_disabled: 'Pelaajien sakkoehdotukset on poistettu käytöstä tässä joukkueessa.',
   exceeds_max_fee: 'Sakko ylittää suurimman sallitun summan.',
+  no_active_fees: 'Ei aktiivisia sakkoja merkittäväksi maksetuksi.',
 }
 
 export function rpcErrorMessage(error: unknown): string {

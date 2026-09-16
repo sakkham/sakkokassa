@@ -185,6 +185,36 @@ export type Database = {
         }
         Relationships: []
       }
+      suggestion_fees: {
+        Row: {
+          fee_id: string
+          suggestion_id: string
+        }
+        Insert: {
+          fee_id: string
+          suggestion_id: string
+        }
+        Update: {
+          fee_id?: string
+          suggestion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suggestion_fees_fee_id_fkey"
+            columns: ["fee_id"]
+            isOneToOne: false
+            referencedRelation: "fees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "suggestion_fees_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suggestion_votes: {
         Row: {
           created_at: string
@@ -482,6 +512,10 @@ export type Database = {
           p_team_id: string
         }
         Returns: Json
+      }
+      suggest_mark_all_paid: {
+        Args: { p_comment: string; p_team_id: string }
+        Returns: string
       }
       suggest_mark_paid: {
         Args: { p_comment: string; p_fee_id: string; p_team_id: string }
