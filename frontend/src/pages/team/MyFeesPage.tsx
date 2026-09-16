@@ -3,7 +3,7 @@ import { useTeamContext } from '../TeamLayout'
 import { supabase } from '../../lib/supabaseClient'
 import { rpcErrorMessage } from '../../lib/rpcErrors'
 import { fmtEur, fmtDate } from '../../lib/format'
-import type { Fee } from '../../lib/team'
+import { seasonLabelsOf, type Fee } from '../../lib/team'
 
 function statusLabel(f: Fee): string | null {
   if (f.status === 'paid') return 'Maksettu'
@@ -16,6 +16,7 @@ export function MyFeesPage() {
   const { team, myMember } = useTeamContext()
   const [fees, setFees] = useState<Fee[] | null>(null)
   const [error, setError] = useState('')
+  const [seasonFilter, setSeasonFilter] = useState('')
 
   const load = useCallback(async () => {
     if (!myMember) { setFees([]); return }
@@ -93,6 +94,8 @@ export function MyFeesPage() {
 
   const active = fees.filter((f) => f.status === 'active')
   const other = fees.filter((f) => f.status !== 'active')
+  const seasons = seasonLabelsOf(fees)
+  const visibleOther = seasonFilter ? other.filter((f) => f.season_label === seasonFilter) : other
   const total = active.reduce((sum, f) => sum + Number(f.amount), 0)
   const isZero = total === 0
 
@@ -139,22 +142,41 @@ export function MyFeesPage() {
 
       {other.length > 0 && (
         <div className="card">
-          <h2>Historia</h2>
-          {other.map((f) => {
-            const label = statusLabel(f)
-            return (
-              <div className="fee-item" key={f.id}>
-                <div>
-                  <div className="fee-reason">{f.reason}</div>
-                  <div className="fee-meta">{fmtDate(f.occurred_at)} · {f.added_by}</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+            <h2>Historia</h2>
+            {seasons.length > 1 && (
+              <select
+                aria-label="Suodata kaudella"
+                value={seasonFilter}
+                onChange={(e) => setSeasonFilter(e.target.value)}
+                style={{ maxWidth: 160 }}
+              >
+                <option value="">Kaikki kaudet</option>
+                {seasons.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            )}
+          </div>
+          {visibleOther.length === 0 ? (
+            <div className="empty" style={{ padding: '12px 0' }}>Ei sakkoja tältä kaudelta.</div>
+          ) : (
+            visibleOther.map((f) => {
+              const label = statusLabel(f)
+              return (
+                <div className="fee-item" key={f.id}>
+                  <div>
+                    <div className="fee-reason">{f.reason}</div>
+                    <div className="fee-meta">{fmtDate(f.occurred_at)} · {f.added_by}</div>
+                  </div>
+                  <div className="fee-right">
+                    <div className="fee-amount">{fmtEur(f.amount)}</div>
+                    {label && <div className={`fee-status ${f.status}`}>{label}</div>}
+                  </div>
                 </div>
-                <div className="fee-right">
-                  <div className="fee-amount">{fmtEur(f.amount)}</div>
-                  {label && <div className={`fee-status ${f.status}`}>{label}</div>}
-                </div>
-              </div>
-            )
-          })}
+              )
+            })
+          )}
         </div>
       )}
     </div>

@@ -191,6 +191,7 @@ export function TeamFeesPage() {
 
       {openSummary && (
         <PlayerFeesModal
+          key={openSummary.member.id}
           member={openSummary.member}
           active={openSummary.active}
           other={openSummary.other}

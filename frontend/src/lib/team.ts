@@ -24,3 +24,15 @@ export function roleClass(role: string): string {
   if (role === 'approver') return 'role-approver'
   return ''
 }
+
+/** Poimii sakkolistasta arkistoitujen kausien nimet, uusin ensin —
+ * käytetään Historia-näkymien kausisuodattimeen (Omat sakot, Joukkue). */
+export function seasonLabelsOf(fees: Fee[]): string[] {
+  const latestArchivedAt = new Map<string, string>()
+  for (const f of fees) {
+    if (f.status !== 'archived' || !f.season_label) continue
+    const prev = latestArchivedAt.get(f.season_label)
+    if (!prev || (f.archived_at ?? '') > prev) latestArchivedAt.set(f.season_label, f.archived_at ?? '')
+  }
+  return [...latestArchivedAt.entries()].sort((a, b) => b[1].localeCompare(a[1])).map(([label]) => label)
+}
