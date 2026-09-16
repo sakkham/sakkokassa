@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { RequireAuth, RedirectIfAuthed } from './components/RequireAuth'
 import { LoginPage } from './pages/LoginPage'
@@ -14,7 +14,7 @@ import { NotFoundPage } from './pages/NotFoundPage'
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <Routes>
           <Route path="/" element={<RedirectIfAuthed><LoginPage /></RedirectIfAuthed>} />
@@ -31,7 +31,7 @@ function App() {
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
