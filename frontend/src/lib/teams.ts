@@ -6,6 +6,7 @@ export interface TeamSummary {
   role: string
   username: string
   myFeeSum: number
+  currencySymbol: string
   /** GlobalAdmin katsomassa joukkuetta, jonka jäsen hän ei ole — ei omaa
    * jäsenrivi/sakkohistoriaa, näytetään silti hallintaoikeudet. */
   isVirtualAdmin: boolean
@@ -14,6 +15,7 @@ export interface TeamSummary {
 export interface ActiveTeam {
   id: string
   name: string
+  currencySymbol: string
 }
 
 /** Kaikki aktiiviset joukkueet. Käytännössä vain GlobalAdmin saa tästä
@@ -22,9 +24,9 @@ export interface ActiveTeam {
  * JoinTeamModal) — kutsukoodijärjestelmän jälkeen ei ole tarkoituskaan
  * näyttää joukkueiden nimiä kenellekään ennen liittymistä. */
 export async function fetchActiveTeams(): Promise<ActiveTeam[]> {
-  const { data, error } = await supabase.from('teams').select('id, name').eq('is_active', true)
+  const { data, error } = await supabase.from('teams').select('id, name, currency_symbol').eq('is_active', true)
   if (error) throw error
-  return data ?? []
+  return (data ?? []).map((t) => ({ id: t.id, name: t.name, currencySymbol: t.currency_symbol }))
 }
 
 /** Dashboardin joukkuelista: omat jäsenyydet + (GlobalAdminille) loput
@@ -38,7 +40,7 @@ export async function fetchDashboardTeams(
 ): Promise<TeamSummary[]> {
   const { data: memberships, error: memErr } = await supabase
     .from('team_members')
-    .select('id, team_id, username, role, teams(name)')
+    .select('id, team_id, username, role, teams(name, currency_symbol)')
     .eq('user_id', userId)
     .eq('status', 'active')
   if (memErr) throw memErr
@@ -66,6 +68,7 @@ export async function fetchDashboardTeams(
     role: m.role,
     username: m.username,
     myFeeSum: feeSumByMember.get(m.id) ?? 0,
+    currencySymbol: m.teams?.currency_symbol ?? '€',
     isVirtualAdmin: false,
   }))
 
@@ -80,6 +83,7 @@ export async function fetchDashboardTeams(
       role: 'teamadmin',
       username: fallbackUsername,
       myFeeSum: 0,
+      currencySymbol: t.currencySymbol,
       isVirtualAdmin: true,
     }))
 

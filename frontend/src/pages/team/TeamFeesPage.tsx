@@ -147,7 +147,7 @@ export function TeamFeesPage() {
                     </div>
                     <div className="player-sub">{s.active.length} aktiivista sakkoa</div>
                   </div>
-                  <div className={`player-total ${isZero ? 'zero' : ''}`}>{fmtEur(s.activeTotal)}</div>
+                  <div className={`player-total ${isZero ? 'zero' : ''}`}>{fmtEur(s.activeTotal, team.currency_symbol)}</div>
                 </div>
               )
             })
@@ -161,7 +161,7 @@ export function TeamFeesPage() {
               <div key={day}>
                 <div className="day-header">
                   <span>{day}</span>
-                  <span className="day-total">{fmtEur(dayTotal)}</span>
+                  <span className="day-total">{fmtEur(dayTotal, team.currency_symbol)}</span>
                 </div>
                 {dayFees.map((f) => (
                   <div className="fee-item" key={f.id}>
@@ -170,7 +170,7 @@ export function TeamFeesPage() {
                       <div className="fee-meta">{f.added_by}</div>
                     </div>
                     <div className="fee-right">
-                      <div className="fee-amount">{fmtEur(f.amount)}</div>
+                      <div className="fee-amount">{fmtEur(f.amount, team.currency_symbol)}</div>
                       {canManage && (
                         <button
                           className="btn-sm btn-sm-ghost"
@@ -196,6 +196,7 @@ export function TeamFeesPage() {
           active={openSummary.active}
           other={openSummary.other}
           activeTotal={openSummary.activeTotal}
+          currencySymbol={team.currency_symbol}
           canManage={canManage}
           onClose={() => setOpenMemberId(null)}
           onDeleteFee={handleDeleteFee}

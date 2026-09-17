@@ -67,7 +67,7 @@ export function MyFeesPage() {
 
   async function handleSuggestAllPaid(teamId: string, total: number) {
     const comment = prompt(
-      `Merkitään kaikki aktiiviset sakot (yhteensä ${fmtEur(total)}) maksetuksi.\n\nKirjoita kommentti (pakollinen):`,
+      `Merkitään kaikki aktiiviset sakot (yhteensä ${fmtEur(total, team.currency_symbol)}) maksetuksi.\n\nKirjoita kommentti (pakollinen):`,
     )
     if (!comment || !comment.trim()) return
     try {
@@ -121,7 +121,7 @@ export function MyFeesPage() {
       {error && <div className="msg msg-err" style={{ display: 'block' }}>{error}</div>}
 
       <div className="card">
-        <div className={`total-amount ${isZero ? 'zero' : ''}`}>{fmtEur(total)}</div>
+        <div className={`total-amount ${isZero ? 'zero' : ''}`}>{fmtEur(total, team.currency_symbol)}</div>
         <div className="total-label">Omat aktiiviset sakot · {myMember.username}</div>
         {active.length > 0 && (
           <button
@@ -150,7 +150,7 @@ export function MyFeesPage() {
                 </div>
               </div>
               <div className="fee-right">
-                <div className="fee-amount">{fmtEur(f.amount)}</div>
+                <div className="fee-amount">{fmtEur(f.amount, team.currency_symbol)}</div>
               </div>
             </div>
           ))}
@@ -187,7 +187,7 @@ export function MyFeesPage() {
                     <div className="fee-meta">{fmtDate(f.occurred_at)} · {f.added_by}</div>
                   </div>
                   <div className="fee-right">
-                    <div className="fee-amount">{fmtEur(f.amount)}</div>
+                    <div className="fee-amount">{fmtEur(f.amount, team.currency_symbol)}</div>
                     {label && <div className={`fee-status ${f.status}`}>{label}</div>}
                   </div>
                 </div>

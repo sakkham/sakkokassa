@@ -8,6 +8,7 @@ interface PlayerFeesModalProps {
   active: Fee[]
   other: Fee[]
   activeTotal: number
+  currencySymbol: string
   canManage: boolean
   onClose: () => void
   onDeleteFee: (fee: Fee) => void
@@ -20,7 +21,7 @@ function statusLabel(f: Fee): string {
   return f.status
 }
 
-export function PlayerFeesModal({ member, active, other, activeTotal, canManage, onClose, onDeleteFee }: PlayerFeesModalProps) {
+export function PlayerFeesModal({ member, active, other, activeTotal, currencySymbol, canManage, onClose, onDeleteFee }: PlayerFeesModalProps) {
   const [seasonFilter, setSeasonFilter] = useState('')
   const isZero = activeTotal === 0
   const seasons = seasonLabelsOf(other)
@@ -28,7 +29,7 @@ export function PlayerFeesModal({ member, active, other, activeTotal, canManage,
   return (
     <Modal title={`💸 ${member.username}`} onClose={onClose}>
       <div style={{ fontSize: 28, fontWeight: 800, color: isZero ? '#2d6a4f' : '#e63946', marginBottom: 4 }}>
-        {fmtEur(activeTotal)}
+        {fmtEur(activeTotal, currencySymbol)}
       </div>
       <div style={{ fontSize: 12, color: '#aaa', marginBottom: 16 }}>aktiiviset sakot</div>
 
@@ -42,7 +43,7 @@ export function PlayerFeesModal({ member, active, other, activeTotal, canManage,
                 <div className="fee-meta">{fmtDate(f.occurred_at)} · {f.added_by}</div>
               </div>
               <div className="fee-right">
-                <div className="fee-amount">{fmtEur(f.amount)}</div>
+                <div className="fee-amount">{fmtEur(f.amount, currencySymbol)}</div>
                 {canManage && (
                   <button
                     className="btn-sm btn-sm-ghost"
@@ -86,7 +87,7 @@ export function PlayerFeesModal({ member, active, other, activeTotal, canManage,
                   <div className="fee-meta">{fmtDate(f.occurred_at)}</div>
                 </div>
                 <div className="fee-right">
-                  <div className="fee-amount" style={{ color: '#aaa' }}>{fmtEur(f.amount)}</div>
+                  <div className="fee-amount" style={{ color: '#aaa' }}>{fmtEur(f.amount, currencySymbol)}</div>
                   <div className={`fee-status ${f.status}`}>{statusLabel(f)}</div>
                 </div>
               </div>

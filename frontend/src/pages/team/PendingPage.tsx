@@ -122,7 +122,7 @@ export function PendingPage() {
               <div className="suggestion-item" key={s.id}>
                 <div className="suggestion-header">
                   <div className="suggestion-name">{targetName}</div>
-                  <div className="suggestion-amount">{fmtEur(Number(s.amount))}</div>
+                  <div className="suggestion-amount">{fmtEur(Number(s.amount), team.currency_symbol)}</div>
                 </div>
                 <span className={`suggestion-type ${info.className}`}>{info.label}</span>
                 <div className="suggestion-meta">

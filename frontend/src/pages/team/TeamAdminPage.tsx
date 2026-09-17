@@ -414,7 +414,7 @@ export function TeamAdminPage() {
             <div className="fee-item" key={f.id}>
               <div className="fee-reason">{f.reason}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <div className="fee-amount">{fmtEur(f.default_amount)}</div>
+                <div className="fee-amount">{fmtEur(f.default_amount, team.currency_symbol)}</div>
                 <button className="btn-sm btn-sm-ghost" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => deleteFeeType(f)}>🗑</button>
               </div>
             </div>
@@ -426,7 +426,14 @@ export function TeamAdminPage() {
       </div>
 
       {modal === 'addfee' && members && feeTypes && (
-        <AddFeeModal teamId={team.id} members={members} feeTypes={feeTypes} onClose={() => setModal(null)} onAdded={closeModalAndReload} />
+        <AddFeeModal
+          teamId={team.id}
+          members={members}
+          feeTypes={feeTypes}
+          currencySymbol={team.currency_symbol}
+          onClose={() => setModal(null)}
+          onAdded={closeModalAndReload}
+        />
       )}
       {modal === 'bulkmove' && members && (
         <BulkMoveFeesModal teamId={team.id} members={members} onClose={() => setModal(null)} onMoved={closeModalAndReload} />
@@ -440,7 +447,7 @@ export function TeamAdminPage() {
         />
       )}
       {modal === 'addfeetype' && (
-        <AddFeeTypeModal teamId={team.id} onClose={() => setModal(null)} onAdded={closeModalAndReload} />
+        <AddFeeTypeModal teamId={team.id} currencySymbol={team.currency_symbol} onClose={() => setModal(null)} onAdded={closeModalAndReload} />
       )}
     </div>
   )

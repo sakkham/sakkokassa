@@ -65,7 +65,7 @@ export function DashboardPage() {
                   <div className="team-card-name">{t.teamName}</div>
                   <div className={`team-card-role ${roleClass(t.role)}`}>{roleLabel(t.role)}</div>
                 </div>
-                <div className={`team-card-sum ${isZero ? 'zero' : ''}`}>{fmtEur(t.myFeeSum)}</div>
+                <div className={`team-card-sum ${isZero ? 'zero' : ''}`}>{fmtEur(t.myFeeSum, t.currencySymbol)}</div>
                 <div style={{ fontSize: 12, color: '#aaa' }}>omat aktiiviset sakot · {t.username}</div>
                 <div className="team-card-footer">
                   <span className="btn-sm btn-sm-ghost">Avaa →</span>

@@ -1,5 +1,5 @@
-export function fmtEur(amount: number): string {
-  return amount.toFixed(2).replace('.', ',') + ' €'
+export function fmtEur(amount: number, currencySymbol: string): string {
+  return amount.toFixed(2).replace('.', ',') + ' ' + currencySymbol
 }
 
 export function fmtDate(ts: string): string {

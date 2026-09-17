@@ -5,11 +5,12 @@ import { rpcErrorMessage } from '../lib/rpcErrors'
 
 interface AddFeeTypeModalProps {
   teamId: string
+  currencySymbol: string
   onClose: () => void
   onAdded: () => void
 }
 
-export function AddFeeTypeModal({ teamId, onClose, onAdded }: AddFeeTypeModalProps) {
+export function AddFeeTypeModal({ teamId, currencySymbol, onClose, onAdded }: AddFeeTypeModalProps) {
   const [reason, setReason] = useState('')
   const [amount, setAmount] = useState('')
   const [error, setError] = useState('')
@@ -51,7 +52,7 @@ export function AddFeeTypeModal({ teamId, onClose, onAdded }: AddFeeTypeModalPro
           onChange={(e) => setReason(e.target.value)}
           disabled={busy}
         />
-        <label htmlFor="fl-amount">Oletussumma (€)</label>
+        <label htmlFor="fl-amount">Oletussumma ({currencySymbol})</label>
         <input
           id="fl-amount"
           type="number"

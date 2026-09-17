@@ -12,6 +12,7 @@ interface AddFeeModalProps {
   teamId: string
   members: TeamMember[]
   feeTypes: FeeType[]
+  currencySymbol: string
   onClose: () => void
   onAdded: () => void
 }
@@ -20,7 +21,7 @@ function todayStr(): string {
   return new Date().toLocaleDateString('sv') // YYYY-MM-DD
 }
 
-export function AddFeeModal({ teamId, members, feeTypes, onClose, onAdded }: AddFeeModalProps) {
+export function AddFeeModal({ teamId, members, feeTypes, currencySymbol, onClose, onAdded }: AddFeeModalProps) {
   const [target, setTarget] = useState(members[0]?.id ?? NEW_PLAYER)
   const [newUsername, setNewUsername] = useState('')
   const [reasonSel, setReasonSel] = useState(feeTypes[0] ? feeTypes[0].reason : CUSTOM_REASON)
@@ -43,7 +44,9 @@ export function AddFeeModal({ teamId, members, feeTypes, onClose, onAdded }: Add
   }
 
   const numericAmount = parseFloat(amount)
-  const qtyPreview = qty > 1 && numericAmount > 0 ? `${qty} × ${fmtEur(numericAmount)} = ${fmtEur(qty * numericAmount)}` : ''
+  const qtyPreview = qty > 1 && numericAmount > 0
+    ? `${qty} × ${fmtEur(numericAmount, currencySymbol)} = ${fmtEur(qty * numericAmount, currencySymbol)}`
+    : ''
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -109,7 +112,7 @@ export function AddFeeModal({ teamId, members, feeTypes, onClose, onAdded }: Add
         <label htmlFor="af-reason">Syy</label>
         <select id="af-reason" value={reasonSel} onChange={(e) => handleReasonChange(e.target.value)} disabled={busy}>
           {feeTypes.map((f) => (
-            <option key={f.id} value={f.reason}>{f.reason} ({fmtEur(f.default_amount)})</option>
+            <option key={f.id} value={f.reason}>{f.reason} ({fmtEur(f.default_amount, currencySymbol)})</option>
           ))}
           <option value={CUSTOM_REASON}>Muu (oma syy)...</option>
         </select>
@@ -127,7 +130,7 @@ export function AddFeeModal({ teamId, members, feeTypes, onClose, onAdded }: Add
           </>
         )}
 
-        <label htmlFor="af-amount">Summa (€)</label>
+        <label htmlFor="af-amount">Summa ({currencySymbol})</label>
         <input
           id="af-amount"
           type="number"

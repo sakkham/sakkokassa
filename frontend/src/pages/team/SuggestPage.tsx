@@ -108,7 +108,7 @@ export function SuggestPage() {
           <label htmlFor="sug-reason">Syy</label>
           <select id="sug-reason" value={reasonSel} onChange={(e) => handleReasonChange(e.target.value)} disabled={busy}>
             {feeTypes.map((f) => (
-              <option key={f.id} value={f.reason}>{f.reason} ({fmtEur(f.default_amount)})</option>
+              <option key={f.id} value={f.reason}>{f.reason} ({fmtEur(f.default_amount, team.currency_symbol)})</option>
             ))}
             <option value={CUSTOM_REASON}>Muu (oma syy)...</option>
           </select>
@@ -126,7 +126,7 @@ export function SuggestPage() {
             </>
           )}
 
-          <label htmlFor="sug-amount">Summa (€)</label>
+          <label htmlFor="sug-amount">Summa ({team.currency_symbol})</label>
           <input
             id="sug-amount"
             type="number"
