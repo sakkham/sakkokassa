@@ -92,7 +92,7 @@ export function TeamLayout() {
   return (
     <>
       <AppHeader title={team.name} backTo="/dashboard" />
-      <TeamTabs teamId={teamId} canSuggest={canSuggest} canApprove={canApprove} canManage={canManage} />
+      <TeamTabs teamId={teamId} canSuggest={canSuggest} canManage={canManage} />
       <Outlet context={{ team, myMember, isGlobalAdmin, canManage, canApprove, refreshTeam: load } satisfies TeamOutletContext} />
     </>
   )
