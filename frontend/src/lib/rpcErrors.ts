@@ -29,6 +29,7 @@ const MESSAGES: Record<string, string> = {
   last_admin: 'Joukkueeseen täytyy jäädä vähintään yksi ylläpitäjä.',
   use_leave_instead: 'Käytä "Poistu joukkueesta" -toimintoa poistuaksesi itse.',
   member_has_history: 'Jäsentä ei voi poistaa, koska hänellä on sakko- tai ehdotushistoriaa.',
+  invalid_view_token: 'Katselulinkki ei kelpaa tai se on poistettu käytöstä.',
 }
 
 export function rpcErrorMessage(error: unknown): string {

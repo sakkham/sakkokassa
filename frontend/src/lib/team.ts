@@ -1,11 +1,12 @@
 import type { Database } from './database.types'
 
-// invite_code on tarkoituksella pois: sarake on lukittu tietokannassa
-// (ei SELECT-oikeutta authenticated-roolille, ks. migraatio 20260916170000)
-// ja paljastuu vain get_invite_code()/regenerate_invite_code()-RPC:iden
-// kautta, joten sitä ei koskaan saa suoraan .select()-kyselyllä — Omit
-// pitää TypeScriptin rehellisenä siitä, ettei kenttä ole oikeasti saatavilla.
-export type Team = Omit<Database['public']['Tables']['teams']['Row'], 'invite_code'>
+// invite_code ja public_view_token ovat tarkoituksella pois: molemmat
+// sarakkeet on lukittu tietokannassa (ei SELECT-oikeutta authenticated-
+// roolille) ja paljastuvat vain omien RPC:idensä kautta (ks. migraatiot
+// 20260916170000 ja 20260917100000), joten niitä ei koskaan saa suoraan
+// .select()-kyselyllä — Omit pitää TypeScriptin rehellisenä siitä, etteivät
+// kentät ole oikeasti saatavilla.
+export type Team = Omit<Database['public']['Tables']['teams']['Row'], 'invite_code' | 'public_view_token'>
 export const TEAM_SAFE_COLUMNS =
   'id, name, is_active, vote_threshold, allow_player_suggest, currency_symbol, season_name, max_fee_amount, created_at'
 

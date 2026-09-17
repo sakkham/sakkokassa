@@ -23,6 +23,11 @@ export function TeamAdminPage() {
   const [codeError, setCodeError] = useState('')
   const [regenerating, setRegenerating] = useState(false)
 
+  const [publicViewToken, setPublicViewToken] = useState<string | null>(null)
+  const [publicViewCopied, setPublicViewCopied] = useState(false)
+  const [publicViewError, setPublicViewError] = useState('')
+  const [publicViewBusy, setPublicViewBusy] = useState(false)
+
   const [roleEdits, setRoleEdits] = useState<Record<string, string>>({})
   const [membersError, setMembersError] = useState('')
   const [membersOk, setMembersOk] = useState('')
@@ -42,15 +47,18 @@ export function TeamAdminPage() {
   const [savingSettings, setSavingSettings] = useState(false)
 
   const load = useCallback(async () => {
-    const [{ data: memberRows }, { data: feeTypeRows }, { data: codeData, error: codeErr }] = await Promise.all([
-      supabase.from('team_members').select('*').eq('team_id', team.id).eq('status', 'active'),
-      supabase.from('fee_types').select('*').eq('team_id', team.id),
-      supabase.rpc('get_invite_code', { p_team_id: team.id }),
-    ])
+    const [{ data: memberRows }, { data: feeTypeRows }, { data: codeData, error: codeErr }, { data: viewTokenData, error: viewTokenErr }] =
+      await Promise.all([
+        supabase.from('team_members').select('*').eq('team_id', team.id).eq('status', 'active'),
+        supabase.from('fee_types').select('*').eq('team_id', team.id),
+        supabase.rpc('get_invite_code', { p_team_id: team.id }),
+        supabase.rpc('get_public_view_token', { p_team_id: team.id }),
+      ])
     setMembers(memberRows ?? [])
     setRoleEdits(Object.fromEntries((memberRows ?? []).map((m) => [m.id, m.role])))
     setFeeTypes(feeTypeRows ?? [])
     if (!codeErr) setInviteCode(codeData ?? null)
+    if (!viewTokenErr) setPublicViewToken(viewTokenData ?? null)
   }, [team.id])
 
   useEffect(() => { load() }, [load])
@@ -153,6 +161,56 @@ export function TeamAdminPage() {
     }
   }
 
+  function publicViewUrl(token: string): string {
+    return `${window.location.origin}${import.meta.env.BASE_URL}#/katso/${token}`
+  }
+
+  async function handleTogglePublicView(enabled: boolean) {
+    setPublicViewError('')
+    setPublicViewBusy(true)
+    try {
+      if (enabled) {
+        const { data, error } = await supabase.rpc('regenerate_public_view_token', { p_team_id: team.id })
+        if (error) throw error
+        setPublicViewToken(data)
+      } else {
+        const { error } = await supabase.rpc('disable_public_view', { p_team_id: team.id })
+        if (error) throw error
+        setPublicViewToken(null)
+      }
+    } catch (err) {
+      setPublicViewError(rpcErrorMessage(err))
+    } finally {
+      setPublicViewBusy(false)
+    }
+  }
+
+  async function handleRegeneratePublicView() {
+    if (!confirm('Luodaanko uusi katselulinkki? Vanha linkki lakkaa toimimasta välittömästi.')) return
+    setPublicViewError('')
+    setPublicViewBusy(true)
+    try {
+      const { data, error } = await supabase.rpc('regenerate_public_view_token', { p_team_id: team.id })
+      if (error) throw error
+      setPublicViewToken(data)
+    } catch (err) {
+      setPublicViewError(rpcErrorMessage(err))
+    } finally {
+      setPublicViewBusy(false)
+    }
+  }
+
+  async function handleCopyPublicViewLink() {
+    if (!publicViewToken) return
+    try {
+      await navigator.clipboard.writeText(publicViewUrl(publicViewToken))
+      setPublicViewCopied(true)
+      setTimeout(() => setPublicViewCopied(false), 2000)
+    } catch {
+      // Leikepöytä ei aina saatavilla — linkki on joka tapauksessa näkyvissä.
+    }
+  }
+
   async function handleRemoveMember(member: TeamMember) {
     const question = member.user_id
       ? `Poistetaanko ${member.username} joukkueesta? Hänen sakkonsa säilyvät joukkueen tiedoissa.`
@@ -210,6 +268,48 @@ export function TeamAdminPage() {
             🔄 Luo uusi koodi
           </button>
         </div>
+      </div>
+
+      <div className="card">
+        <h2>🔎 Julkinen katselulinkki</h2>
+        {publicViewError && <div className="msg msg-err" style={{ display: 'block' }}>{publicViewError}</div>}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 500 }}>Salli katselu ilman kirjautumista</div>
+            <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>
+              Näyttää pelaajien nimet ja aktiiviset sakkosummat kenelle tahansa jolla on linkki — ei sakkorivejä, ei ehdotuksia.
+            </div>
+          </div>
+          <label className="toggle-wrap">
+            <input
+              type="checkbox"
+              checked={!!publicViewToken}
+              onChange={(e) => handleTogglePublicView(e.target.checked)}
+              disabled={publicViewBusy}
+            />
+            <span className="toggle-slider" />
+          </label>
+        </div>
+        {publicViewToken && (
+          <>
+            <div
+              style={{
+                fontSize: 12, wordBreak: 'break-all', background: '#f0f2f5',
+                borderRadius: 12, padding: '12px', marginBottom: 12,
+              }}
+            >
+              {publicViewUrl(publicViewToken)}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-outline" style={{ flex: 1 }} onClick={handleCopyPublicViewLink}>
+                {publicViewCopied ? '✅ Kopioitu!' : '📋 Kopioi linkki'}
+              </button>
+              <button className="btn btn-outline-danger" style={{ flex: 1 }} onClick={handleRegeneratePublicView} disabled={publicViewBusy}>
+                🔄 Luo uusi linkki
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="card">

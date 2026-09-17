@@ -386,6 +386,7 @@ export type Database = {
           is_active: boolean
           max_fee_amount: number
           name: string
+          public_view_token: string | null
           season_name: string
           vote_threshold: number
         }
@@ -398,6 +399,7 @@ export type Database = {
           is_active?: boolean
           max_fee_amount?: number
           name: string
+          public_view_token?: string | null
           season_name?: string
           vote_threshold?: number
         }
@@ -410,6 +412,7 @@ export type Database = {
           is_active?: boolean
           max_fee_amount?: number
           name?: string
+          public_view_token?: string | null
           season_name?: string
           vote_threshold?: number
         }
@@ -473,12 +476,15 @@ export type Database = {
         Returns: undefined
       }
       delete_fee_type: { Args: { p_fee_type_id: string }; Returns: undefined }
+      disable_public_view: { Args: { p_team_id: string }; Returns: undefined }
       display_name: {
         Args: { p_team_id: string; p_user_id: string }
         Returns: string
       }
       generate_invite_code: { Args: never; Returns: string }
       get_invite_code: { Args: { p_team_id: string }; Returns: string }
+      get_public_team_view: { Args: { p_token: string }; Returns: Json }
+      get_public_view_token: { Args: { p_team_id: string }; Returns: string }
       has_team_role: {
         Args: { p_roles: string[]; p_team: string; p_user: string }
         Returns: boolean
@@ -499,6 +505,10 @@ export type Database = {
       }
       parse_fee_date: { Args: { p_date: string }; Returns: string }
       regenerate_invite_code: { Args: { p_team_id: string }; Returns: string }
+      regenerate_public_view_token: {
+        Args: { p_team_id: string }
+        Returns: string
+      }
       remove_member: {
         Args: { p_member_id: string; p_team_id: string }
         Returns: Json

@@ -10,6 +10,7 @@ import { PendingPage } from './pages/team/PendingPage'
 import { TeamFeesPage } from './pages/team/TeamFeesPage'
 import { TeamAdminPage } from './pages/team/TeamAdminPage'
 import { GlobalAdminPage } from './pages/GlobalAdminPage'
+import { PublicTeamViewPage } from './pages/PublicTeamViewPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="hallinta" element={<TeamAdminPage />} />
           </Route>
           <Route path="/admin" element={<RequireAuth><GlobalAdminPage /></RequireAuth>} />
+          <Route path="/katso/:token" element={<PublicTeamViewPage />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
