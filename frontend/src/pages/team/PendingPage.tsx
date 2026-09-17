@@ -94,6 +94,17 @@ export function PendingPage() {
     }
   }
 
+  async function handleCancel(suggestion: Suggestion) {
+    if (!confirm('Peruutetaanko oma ehdotuksesi? Tätä ei voi perua takaisin.')) return
+    try {
+      const { error: err } = await supabase.rpc('cancel_suggestion', { p_team_id: team.id, p_suggestion_id: suggestion.id })
+      if (err) throw err
+      load()
+    } catch (err) {
+      alert(rpcErrorMessage(err))
+    }
+  }
+
   if (suggestions === null) {
     return <div className="page"><div className="loading">Ladataan...</div></div>
   }
@@ -147,6 +158,8 @@ export function PendingPage() {
                         )}
                       </>
                     )
+                  ) : isSuggester ? (
+                    <button className="btn-sm btn-sm-reject" onClick={() => handleCancel(s)}>❌ Peruuta</button>
                   ) : alreadyVoted ? (
                     <span style={{ fontSize: 12, color: '#aaa' }}>✓ Äänestit</span>
                   ) : (

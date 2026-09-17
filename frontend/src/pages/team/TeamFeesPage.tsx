@@ -105,6 +105,30 @@ export function TeamFeesPage() {
     }
   }
 
+  async function handleMarkFeePaid(fee: Fee) {
+    if (!confirm(`Merkitäänkö "${fee.reason}" maksetuksi?`)) return
+    try {
+      const { error: err } = await supabase.rpc('mark_fee_paid', { p_team_id: team.id, p_fee_id: fee.id })
+      if (err) throw err
+      setOpenMemberId(null)
+      load()
+    } catch (err) {
+      alert(rpcErrorMessage(err))
+    }
+  }
+
+  async function handleMarkAllPaid(member: TeamMember) {
+    if (!confirm(`Merkitäänkö kaikki ${member.username}:n aktiiviset sakot maksetuiksi?`)) return
+    try {
+      const { error: err } = await supabase.rpc('mark_all_fees_paid', { p_team_id: team.id, p_member_id: member.id })
+      if (err) throw err
+      setOpenMemberId(null)
+      load()
+    } catch (err) {
+      alert(rpcErrorMessage(err))
+    }
+  }
+
   if (members === null || fees === null) {
     return <div className="page"><div className="loading">Ladataan...</div></div>
   }
@@ -172,13 +196,24 @@ export function TeamFeesPage() {
                     <div className="fee-right">
                       <div className="fee-amount">{fmtEur(f.amount, team.currency_symbol)}</div>
                       {canManage && (
-                        <button
-                          className="btn-sm btn-sm-ghost"
-                          style={{ marginTop: 4, fontSize: 10 }}
-                          onClick={() => handleDeleteFee(f)}
-                        >
-                          🗑
-                        </button>
+                        <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                          <button
+                            className="btn-sm btn-sm-ghost"
+                            style={{ fontSize: 10 }}
+                            title="Merkitse maksetuksi"
+                            onClick={() => handleMarkFeePaid(f)}
+                          >
+                            ✅
+                          </button>
+                          <button
+                            className="btn-sm btn-sm-ghost"
+                            style={{ fontSize: 10 }}
+                            title="Poista"
+                            onClick={() => handleDeleteFee(f)}
+                          >
+                            🗑
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -200,6 +235,8 @@ export function TeamFeesPage() {
           canManage={canManage}
           onClose={() => setOpenMemberId(null)}
           onDeleteFee={handleDeleteFee}
+          onMarkFeePaid={handleMarkFeePaid}
+          onMarkAllPaid={handleMarkAllPaid}
         />
       )}
     </div>

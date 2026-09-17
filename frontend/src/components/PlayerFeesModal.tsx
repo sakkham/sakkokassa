@@ -12,6 +12,8 @@ interface PlayerFeesModalProps {
   canManage: boolean
   onClose: () => void
   onDeleteFee: (fee: Fee) => void
+  onMarkFeePaid: (fee: Fee) => void
+  onMarkAllPaid: (member: TeamMember) => void
 }
 
 function statusLabel(f: Fee): string {
@@ -21,7 +23,9 @@ function statusLabel(f: Fee): string {
   return f.status
 }
 
-export function PlayerFeesModal({ member, active, other, activeTotal, currencySymbol, canManage, onClose, onDeleteFee }: PlayerFeesModalProps) {
+export function PlayerFeesModal({
+  member, active, other, activeTotal, currencySymbol, canManage, onClose, onDeleteFee, onMarkFeePaid, onMarkAllPaid,
+}: PlayerFeesModalProps) {
   const [seasonFilter, setSeasonFilter] = useState('')
   const isZero = activeTotal === 0
   const seasons = seasonLabelsOf(other)
@@ -32,6 +36,12 @@ export function PlayerFeesModal({ member, active, other, activeTotal, currencySy
         {fmtEur(activeTotal, currencySymbol)}
       </div>
       <div style={{ fontSize: 12, color: '#aaa', marginBottom: 16 }}>aktiiviset sakot</div>
+
+      {canManage && active.length > 0 && (
+        <button className="btn btn-success" style={{ marginBottom: 16 }} onClick={() => onMarkAllPaid(member)}>
+          ✅ Merkitse kaikki maksetuksi
+        </button>
+      )}
 
       {active.length > 0 && (
         <>
@@ -45,13 +55,24 @@ export function PlayerFeesModal({ member, active, other, activeTotal, currencySy
               <div className="fee-right">
                 <div className="fee-amount">{fmtEur(f.amount, currencySymbol)}</div>
                 {canManage && (
-                  <button
-                    className="btn-sm btn-sm-ghost"
-                    style={{ marginTop: 4, fontSize: 10 }}
-                    onClick={() => onDeleteFee(f)}
-                  >
-                    🗑
-                  </button>
+                  <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                    <button
+                      className="btn-sm btn-sm-ghost"
+                      style={{ fontSize: 10 }}
+                      title="Merkitse maksetuksi"
+                      onClick={() => onMarkFeePaid(f)}
+                    >
+                      ✅
+                    </button>
+                    <button
+                      className="btn-sm btn-sm-ghost"
+                      style={{ fontSize: 10 }}
+                      title="Poista"
+                      onClick={() => onDeleteFee(f)}
+                    >
+                      🗑
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

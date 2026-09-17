@@ -467,6 +467,10 @@ export type Database = {
         }
         Returns: number
       }
+      cancel_suggestion: {
+        Args: { p_suggestion_id: string; p_team_id: string }
+        Returns: undefined
+      }
       create_team: {
         Args: { p_creator_username: string; p_name: string }
         Returns: Json
@@ -501,6 +505,14 @@ export type Database = {
       leave_team: { Args: { p_team_id: string }; Returns: undefined }
       log_audit: {
         Args: { p_action: string; p_details: Json; p_team_id: string }
+        Returns: undefined
+      }
+      mark_all_fees_paid: {
+        Args: { p_member_id: string; p_team_id: string }
+        Returns: number
+      }
+      mark_fee_paid: {
+        Args: { p_fee_id: string; p_team_id: string }
         Returns: undefined
       }
       parse_fee_date: { Args: { p_date: string }; Returns: string }
