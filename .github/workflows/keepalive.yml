@@ -1,0 +1,33 @@
+name: Pidä Supabase hereillä
+
+# Supabasen ilmainen taso jäädyttää projektin 7 päivän täydellisen
+# inaktiivisuuden jälkeen. Tämä workflow herättää tietokannan
+# säännöllisesti kutsumalla oikeaa RPC-funktiota (username_exists —
+# sama funktio jota kirjautumissivu käyttää tarkistaakseen onko
+# tunnus jo olemassa), joka tekee aidon SELECT-kyselyn kantaan eikä
+# vain osu jonkin CDN:n välimuistiin. Ei tarvitse uusia salaisuuksia —
+# käyttää samoja VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY-arvoja jotka
+# on jo lisätty deploy.yml:ää varten.
+#
+# HUOM: GitHub poistaa ajastetut workflowt automaattisesti käytöstä,
+# jos repoon ei ole pushattu mitään 60 päivään — jos projekti on
+# täysin hiljaa pidempään kuin tuon, tämäkin lakkaa toimimasta eikä
+# herätä mitään. Ainoa varma korjaus on käydä joskus pushaamassa tai
+# ajaa workflow käsin (Actions-välilehti → "Run workflow").
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # joka päivä klo 5 UTC — reilusti alle 7 vrk rajan
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Herätä Supabase-tietokanta
+        run: |
+          curl -sf -X POST "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/rpc/username_exists" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"p_username": "__keepalive_ping__"}'
